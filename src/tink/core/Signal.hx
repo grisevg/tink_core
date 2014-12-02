@@ -3,6 +3,8 @@ package tink.core;
 import tink.core.Callback;
 import tink.core.Noise;
 
+using Lambda;
+
 abstract Signal<T>(Callback<T>->CallbackLink) {
 	
 	public inline function new(f:Callback<T>->CallbackLink) this = f;
@@ -15,6 +17,10 @@ abstract Signal<T>(Callback<T>->CallbackLink) {
 		return
 			if (gather) ret.gather();
 			else ret;
+	}
+
+	public function mapValue<A>(value:A, ?gather = true):Signal<A> {
+		return map((function (_) return value), gather);
 	}
 	
 	public function flatMap<A>(f:T->Future<A>, ?gather = true):Signal<A> {
@@ -58,7 +64,16 @@ abstract Signal<T>(Callback<T>->CallbackLink) {
 		handle(function (x) ret.trigger(x));
 		return ret.asSignal();
 	}
-	
+
+	public static function fromMany<A>(callbacks:Array<Signal<A>>):Signal<A>
+	{
+		var ret = new Signal(function (cb:Callback<A>):CallbackLink
+		{
+			return callbacks.map(function(signal:Signal<A>) return signal.handle(cb));
+		});
+		return ret;
+	}
+
 	static public function trigger<T>():SignalTrigger<T>
 		return new SignalTrigger();
 		
