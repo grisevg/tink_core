@@ -12,7 +12,9 @@ abstract Callback<T>(Null<T->Void>) from (T->Void) {
 		
 	@:from static inline function fromNiladic<A>(f:Void->Void):Callback<A> 
 		return new Callback(function (r) f());
-	
+
+	public inline function toVoid():Void -> Void return function() this(null);
+
 	@:from static function fromMany<A>(callbacks:Array<Callback<A>>):Callback<A> 
 		return
 			function (v:A) 
