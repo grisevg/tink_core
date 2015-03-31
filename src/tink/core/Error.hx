@@ -10,7 +10,8 @@ typedef Pos =
 //TODO: there's huge overlap with haxe.macro.Error
 typedef Error = TypedError<Dynamic>;
 
-@:enum abstract ErrorCode(Int) from Int to Int {
+@:enum abstract ErrorCode(Int) from Int to Int 
+{
 	var BadRequest = 400;
 	var Unauthorized = 401;
 	var PaymentRequired = 402;
@@ -35,26 +36,32 @@ typedef Error = TypedError<Dynamic>;
 
 }
 
-class TypedError<T> {
+class TypedError<T> 
+{
 	public var message(default, null):String;//It might make sense for the message to be lazy
 	public var code(default, null):ErrorCode;
 	public var data(default, null):T;
 	public var pos(default, null):Null<Pos>;
 	
-	public function new(?code:ErrorCode = InternalError, message, ?pos) {
+	public function new(?code:ErrorCode = InternalError, message, ?pos) 
+	{
 		this.code = code;
 		this.message = message;
 		this.pos = pos;
 	}
+	
 	function printPos()
+	{
 		return
 			#if macro
 				Std.string(pos);
 			#else
 				pos.className+'.'+pos.methodName+':'+pos.lineNumber;
 			#end
-			
-	@:keep public function toString() {
+	}
+	
+	@:keep public function toString() 
+	{
 		var ret = 'Error: $message';
 		if (pos != null)
 			ret += " "+printPos();
@@ -62,6 +69,7 @@ class TypedError<T> {
 	}
 	
 	@:keep public function throwSelf():Dynamic
+	{
 		return
 			#if macro
 				#if tink_macro
@@ -72,8 +80,10 @@ class TypedError<T> {
 			#else
 				throw this;
 			#end
-		
-	static public function withData(?code:ErrorCode = 500, message:String, data:Dynamic, ?pos:Pos) {
+	}
+	
+	static public function withData(?code:ErrorCode = 500, message:String, data:Dynamic, ?pos:Pos) 
+	{
 		var ret = new Error(code, message, pos);
 		ret.data = data;
 		return ret;
