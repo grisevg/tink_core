@@ -5,7 +5,7 @@ typedef Surprise<D, F> = tink.core.Surprise<D, F>;
 typedef FutureTrigger<T> = tink.core.FutureTrigger<T>;
 
 typedef Outcome<D, F> = tink.core.Outcome<D, F>;
-typedef OutcomeTools = tink.core.Outcome.OutcomeTools;
+typedef OutcomeTools = tink.core.OutcomeTools;
 
 typedef Either<L, R> = tink.core.Either<L, R>;
 

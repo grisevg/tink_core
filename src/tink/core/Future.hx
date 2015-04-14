@@ -3,7 +3,7 @@ package tink.core;
 import tink.core.Callback;
 import haxe.ds.Option;
 
-using tink.core.Outcome;
+using tink.core.OutcomeTools;
 
 abstract Future<T>(Callback<T>->CallbackLink) 
 {
@@ -83,7 +83,7 @@ abstract Future<T>(Callback<T>->CallbackLink)
 		for (f in futures) {
 			ret = ret.flatMap(function (results:Array<A>) 
 			{
-				return f.map( function (result) { return results.concat([result]) }, false );
+				return f.map( function (result) { return results.concat([result]); }, false );
 			}, false);
 		}
 		return (gather) ? ret.gather() : ret;
@@ -135,16 +135,16 @@ abstract Future<T>(Callback<T>->CallbackLink)
 	@:noCompletion @:op(a >> b) static public function _tryFailingFlatMap<D, F, R>(f:Surprise<D, F>, map:D->Surprise<R, F>)
 	{
 		return f.flatMap(function (o) return switch o {
-			case Success(d): map(d);
-			case Failure(f): Future.sync(Failure(f));
+			case Outcome.Success(d): map(d);
+			case Outcome.Failure(f): Future.sync(Outcome.Failure(f));
 		});
 	}
 	
 	@:noCompletion @:op(a >> b) static public function _tryFlatMap<D, F, R>(f:Surprise<D, F>, map:D->Future<R>):Surprise<R, F> 
 	{
 		return f.flatMap(function (o) return switch o {
-			case Success(d): map(d).map(Success);
-			case Failure(f): Future.sync(Failure(f));
+			case Outcome.Success(d): map(d).map(Outcome.Success);
+			case Outcome.Failure(f): Future.sync(Outcome.Failure(f));
 		});
 	}
 	

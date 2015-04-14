@@ -1,8 +1,6 @@
 package tink.core;
 
-import haxe.ds.Option;
-import haxe.ds.Option;
-import haxe.ds.Option;
+import tink.core.Outcome;
 import haxe.ds.Option;
 
 class OutcomeTools 
@@ -63,10 +61,10 @@ class OutcomeTools
 	static public inline function map<A, B, F>(outcome:Outcome<A, F>, transform: A->B)
 	{
 		return switch (outcome) {
-			case Success(a):
-				Success(transform(a));
-			case Failure(f):
-				Failure(f);
+			case Outcome.Success(a):
+				Outcome.Success(transform(a));
+			case Outcome.Failure(f):
+				Outcome.Failure(f);
 		}
 	}
 
@@ -99,8 +97,8 @@ private abstract OutcomeMapper<DIn, FIn, DOut, FOut>({ f: Outcome<DIn, FIn>->Out
 	@:from static function withSameError<In, Out, Error>(f:In->Outcome<Out, Error>):OutcomeMapper<In, Error, Out, Error>
 	{
 		return new OutcomeMapper(function (o) return switch o {
-			case Success(d): f(d);
-			case Failure(f): Failure(f);
+			case Outcome.Success(d): f(d);
+			case Outcome.Failure(f): Outcome.Failure(f);
 		});
 	}
 
@@ -108,10 +106,10 @@ private abstract OutcomeMapper<DIn, FIn, DOut, FOut>({ f: Outcome<DIn, FIn>->Out
 	{
 		return new OutcomeMapper(function (o) return switch o {
 			case Success(d): switch f(d) {
-				case Success(d): Success(d);
-				case Failure(f): Failure(Right(f));
+				case Outcome.Success(d): Outcome.Success(d);
+				case Outcome.Failure(f): Outcome.Failure(Either.Right(f));
 			}
-			case Failure(f): Failure(Left(f));
+			case Failure(f): Failure(Either.Left(f));
 		});
 	}
 }
